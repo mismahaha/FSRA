@@ -5,6 +5,7 @@ import torch.nn.functional as F
 from .backbones.van import van_small
 
 
+
 class Gem_heat(nn.Module):
     def __init__(self, dim = 768, p=3, eps=1e-6):
         super(Gem_heat, self).__init__()
@@ -104,6 +105,19 @@ class build_transformer(nn.Module):
             self.transformer = van_small()
             checkpoint = torch.load(opt.pretrain_path)["state_dict"]
             self.transformer.load_state_dict(checkpoint)
+        elif opt.backbone == "DINOV2":
+            print("using DINOv2 as backbone")
+            self.in_planes = 768
+            # model_path = opt.pretrain_path  # 本地模型文件的路径
+            # 假设本地模型文件是保存的整个模型，可以直接加载
+            # self.transformer = torch.load(model_path)  # 加载预训练模型
+            # 加载 DINOv2 模型
+            # self.transformer = dinov2.dinov2_vitb14(pretrained=True)  # 假设使用 ViT-S 小模型
+            # 使用 torch.hub.load 加载预训练的 DINOv2 模型
+            self.transformer = torch.hub.load('facebookresearch/dinov2', 'dinov2_vitb14', pretrained=True)
+            # 冻结 DINOv2 模型参数
+            for param in self.transformer.parameters():
+                param.requires_grad = False
 
         self.num_classes = num_classes
 

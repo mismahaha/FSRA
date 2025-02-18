@@ -39,8 +39,8 @@ def get_parse():
     parser.add_argument('--num_worker', default=6,type=int, help='' )
     parser.add_argument('--batchsize', default=8, type=int, help='batchsize')
     parser.add_argument('--pad', default=0, type=int, help='padding')
-    parser.add_argument('--h', default=256, type=int, help='height')
-    parser.add_argument('--w', default=256, type=int, help='width')
+    parser.add_argument('--h', default=224, type=int, help='height') #256
+    parser.add_argument('--w', default=224, type=int, help='width') #256
     parser.add_argument('--views', default=2, type=int, help='the number of views')
     parser.add_argument('--erasing_p', default=0, type=float, help='Random Erasing probability, in [0,1]')
     parser.add_argument('--warm_epoch', default=0, type=int, help='the first K epoch that needs warm up')
@@ -56,7 +56,7 @@ def get_parse():
     parser.add_argument('--sample_num', default=1, type=float, help='num of repeat sampling' )
     parser.add_argument('--num_epochs', default=120, type=int, help='' )
     parser.add_argument('--steps', default=[70,110], type=int, help='' )
-    parser.add_argument('--backbone', default="VIT-S", type=str, help='' )
+    parser.add_argument('--backbone', default="DINOV2", type=str, help='' )
     parser.add_argument('--pretrain_path', default="", type=str, help='' )
     opt = parser.parse_args()
     return opt

@@ -5,18 +5,23 @@ class two_view_net(nn.Module):
     def __init__(self, opt, class_num, block=4, return_f=False):
         super(two_view_net, self).__init__()
         self.model_1 = make_transformer_model(opt, num_class=class_num, block=block,return_f=return_f)
+        self.fc = nn.Linear(224, 512)
 
 
     def forward(self, x1, x2):
         if x1 is None:
             y1 = None
         else:
-            y1 = self.model_1(x1)
+            #y1 = self.model_1(x1)
+            y1 = self.fc(x1)
+
 
         if x2 is None:
             y2 = None
         else:
-            y2 = self.model_1(x2)
+            #y2 = self.model_1(x2)
+            y2 = self.fc(x2)
+
         return y1, y2
 
 
