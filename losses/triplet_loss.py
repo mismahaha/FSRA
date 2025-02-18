@@ -160,24 +160,12 @@ class Tripletloss(nn.Module):
             targets: ground truth labels with shape (num_classes)
         """
 
-        #n = inputs.size(0)
-
-        #inputs = normalize(inputs,axis=-1)
-
-        #dist =euclidean_dist(inputs,inputs)
-        # For each anchor, find the hardest positive and negative
-
         n = inputs.size(0)
-        assert len(targets) == n, "The length of targets must match the number of samples."
 
-        # Flatten the inputs to 2D
-        samples, d = inputs.size(1), inputs.size(2)
-        inputs = inputs.view(n, samples * d)  # Shape becomes (n, samples*d)
+        inputs = normalize(inputs,axis=-1)
 
-        # Normalize the features
-        inputs = normalize(inputs, axis=-1)
-
-        dist = euclidean_dist(inputs, inputs)
+        dist =euclidean_dist(inputs,inputs)
+        # For each anchor, find the hardest positive and negative
         mask = targets.expand(n, n).eq(targets.expand(n, n).t())
         dist_ap, dist_an = [], []
         for i in range(n):
