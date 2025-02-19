@@ -21,6 +21,10 @@ def euclidean_dist(x, y):
     Returns:
       dist: pytorch Variable, with shape [m, n]
     """
+    x = x.squeeze(1)  # 去除多余的维度
+    y = y.squeeze(1)  # 去除多余的维度
+    print(f"x shape after squeeze: {x.shape}")  # 调试代码
+    print(f"y shape after squeeze: {y.shape}")  # 调试代码
     m, n = x.size(0), y.size(0)
     xx = torch.pow(x, 2).sum(1, keepdim=True).expand(m, n)
     yy = torch.pow(y, 2).sum(1, keepdim=True).expand(n, m).t()
@@ -160,9 +164,17 @@ class Tripletloss(nn.Module):
             targets: ground truth labels with shape (num_classes)
         """
 
-        n = inputs.size(0)
+        #n = inputs.size(0)
 
-        inputs = normalize(inputs,axis=-1)
+        #inputs = normalize(inputs,axis=-1)
+
+        print(f"inputs shape before normalization: {inputs.shape}")  # 调试代码
+    
+        inputs = normalize(inputs, axis=-1)
+    
+        print(f"inputs shape after normalization: {inputs.shape}")  # 调试代码
+    
+        n = inputs.size(0)
 
         dist =euclidean_dist(inputs,inputs)
         # For each anchor, find the hardest positive and negative

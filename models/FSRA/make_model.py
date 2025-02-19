@@ -130,14 +130,36 @@ class build_transformer(nn.Module):
 
 
     def forward(self, x):
-        features = self.transformer(x)
-        tranformer_feature = self.classifier1(features[:,0])
+        #features = self.transformer(x)
+        #tranformer_feature = self.classifier1(features[:,0])
         # tranformer_feature = torch.mean(features,dim=1)
         # tranformer_feature = self.classifier1(tranformer_feature)
-        if self.block==1:
-            return tranformer_feature
+        #if self.block==1:
+        #    return tranformer_feature
 
-        part_features = features[:,1:]
+        #part_features = features[:,1:]
+
+                # (修改) DINOv2 输出处理
+        features = self.transformer(x)[-1]  # DINOv2 的输出可能是一个元组，取最后一个元素作为特征
+
+        if isinstance(features, tuple):
+            # (修改) 如果输出是元组，提取 CLS token 和 patch tokens
+            features = features[-1]
+
+        # (修改) 确保 features 的形状为 [batch_size, num_patches+1, 768]
+        if features.dim() != 3:
+            # (修改) 如果形状不正确，调整为 [batch_size, num_patches+1, 768]
+            features = features.permute(0, 3, 1, 2).view(features.size(0), 768, -1).transpose(1, 2)
+        print(f"features shape: {features.shape}")
+        
+        # (保留) CLS token 和 patch tokens
+        cls_token = features[:, 0, :]
+        part_features = features[:, 1:, :]
+
+        tranformer_feature = self.classifier1(cls_token)  # (保留) CLS token 分类
+
+        if self.block == 1:
+            return tranformer_feature
 
         heat_result = self.get_heartmap_pool(part_features)
         y = self.part_classifier(self.block, heat_result, cls_name='classifier_heat')
